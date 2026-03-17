@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Django Quiz</title>
+</head>
+<body>
+    <div class="quiz-container">
+        <h1 id="question"></h1>
+        <button onclick="check(1)" id="o1"></button>
+        <button id="o2" onclick="check(2)"></button>
+        <button id="o3" onclick="check(3)"></button>
+        <button id="o4" onclick="check(4)"></button>
+        <p id="result"></p>
+    </div>
+    <script>
+        let score = 0;
+        let questions = []
+        let index = 0
+        fetch('/questions/').then(response => {
+            return response.json();
+        }).
+    then(data => {
+                questions = data;
+                load()
+        })
+        function load() {
+            let q = questions[index]
+            question.innerText = q.text
+            o1.innerText = q.option1
+            o2.innerText = q.option2
+            o3.innerText = q.option3
+            o4.innerText = q.option4
+        }
+        function check(ans) {
+            let q = questions[index]
+            if (ans === q.correct) {
+                score++
+            }
+            index++
+            if (index < questions.length) {
+                load()
+            } else {
+                showResult()
+            }
+        }
+        function showResult() {
+            document.body.innerHTML = `<h1>score ${score}</h1>
+            <button onclick=save()>save score</button>`
+        }
+        function save() {
+            name = prompt('enter your name')
+            fetch(`/save/?username=${name}&score=${score}`)
+        }
+    </script>
+</body>
+</html>
